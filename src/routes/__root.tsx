@@ -72,16 +72,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Nairobi Powerbikes — Premium Sports Bikes & Superbikes in Kenya" },
+      { name: "description", content: "Nairobi Powerbikes is Kenya's premier dealership for premium sports bikes, naked bikes, and adventure motorcycles. Ducati, BMW, Yamaha, Kawasaki, KTM, Honda." },
+      { name: "author", content: "Nairobi Powerbikes" },
+      { property: "og:title", content: "Nairobi Powerbikes — Ride Your Dream Machine" },
+      { property: "og:description", content: "Premium sports bikes and superbikes in Kenya. Verified imports, financing, and nationwide delivery." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
