@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import heroImg from "@/assets/hero-bike.jpg";
 import { PageShell } from "@/components/page-shell";
 import { BikeCard } from "@/components/bike-card";
-import { bikes, brands } from "@/data/bikes";
+import { brands } from "@/data/bikes";
+import { fetchPublishedBikes } from "@/lib/queries";
+import type { Bike } from "@/lib/types";
 import { ShieldCheck, Truck, CreditCard, Wrench, Star, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -17,7 +20,11 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const featured = bikes.slice(0, 3);
+  const [featured, setFeatured] = useState<Bike[]>([]);
+  useEffect(() => {
+    fetchPublishedBikes().then((b) => setFeatured(b.slice(0, 3))).catch(() => {});
+  }, []);
+
   return (
     <PageShell>
       {/* HERO */}
@@ -48,16 +55,10 @@ function HomePage() {
               Nairobi's premier destination for high-performance superbikes and adventure motorcycles. Engineered for the bold.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link
-                to="/bikes"
-                className="px-8 py-4 bg-foreground text-background font-bold uppercase text-sm tracking-widest hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
+              <Link to="/bikes" className="px-8 py-4 bg-foreground text-background font-bold uppercase text-sm tracking-widest hover:bg-accent hover:text-accent-foreground transition-colors">
                 View Bikes
               </Link>
-              <Link
-                to="/book-ride"
-                className="px-8 py-4 border border-border font-bold uppercase text-sm tracking-widest hover:bg-surface transition-colors"
-              >
+              <Link to="/book-ride" className="px-8 py-4 border border-border font-bold uppercase text-sm tracking-widest hover:bg-surface transition-colors">
                 Book a Test Ride
               </Link>
             </div>
@@ -65,7 +66,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* STATS */}
       <section className="bg-surface border-b border-border py-12">
         <div className="container-x grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
@@ -75,32 +75,22 @@ function HomePage() {
             { v: "8", l: "Years In Business" },
           ].map((s, i) => (
             <div key={s.l} className="flex flex-col">
-              <span className={`font-display text-4xl md:text-5xl ${i === 0 ? "text-accent" : ""}`}>
-                {s.v}
-              </span>
-              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-1">
-                {s.l}
-              </span>
+              <span className={`font-display text-4xl md:text-5xl ${i === 0 ? "text-accent" : ""}`}>{s.v}</span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-1">{s.l}</span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* FEATURED BIKES */}
       <section className="py-24 container-x">
         <div className="flex flex-wrap gap-6 justify-between items-end mb-16">
           <div>
             <h2 className="font-display text-4xl md:text-5xl uppercase italic tracking-tighter">
               Current <span className="text-accent">Lineup</span>
             </h2>
-            <p className="font-mono text-xs text-muted-foreground uppercase mt-2 tracking-widest">
-              // Fresh in the paddock
-            </p>
+            <p className="font-mono text-xs text-muted-foreground uppercase mt-2 tracking-widest">// Fresh in the paddock</p>
           </div>
-          <Link
-            to="/bikes"
-            className="text-xs font-bold uppercase tracking-widest border-b border-accent pb-1 inline-flex items-center gap-2"
-          >
+          <Link to="/bikes" className="text-xs font-bold uppercase tracking-widest border-b border-accent pb-1 inline-flex items-center gap-2">
             Explore Full Fleet <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -112,7 +102,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* WHY US */}
       <section className="bg-surface border-y border-border py-24">
         <div className="container-x">
           <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tighter mb-16 max-w-2xl">
@@ -135,12 +124,9 @@ function HomePage() {
         </div>
       </section>
 
-      {/* BRANDS */}
       <section className="py-20 border-b border-border">
         <div className="container-x">
-          <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-10 text-center">
-            // Manufacturers we represent
-          </p>
+          <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-10 text-center">// Manufacturers we represent</p>
           <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 opacity-60">
             {brands.map((b) => (
               <span key={b.name} className="font-display text-xl md:text-2xl tracking-widest italic uppercase">
@@ -151,7 +137,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
       <section className="py-24 container-x">
         <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tighter mb-16 max-w-2xl">
           What Riders <span className="text-accent">Say</span>
@@ -176,12 +161,8 @@ function HomePage() {
         </div>
       </section>
 
-      {/* CTA BANNER */}
       <section className="bg-accent py-24 text-center overflow-hidden relative">
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-10 font-display text-[20vw] whitespace-nowrap leading-none select-none translate-y-12 pointer-events-none"
-        >
+        <div aria-hidden className="absolute inset-0 opacity-10 font-display text-[20vw] whitespace-nowrap leading-none select-none translate-y-12 pointer-events-none">
           ADRENALINE ADRENALINE
         </div>
         <div className="relative z-10 container-x">
@@ -192,16 +173,10 @@ function HomePage() {
             Schedule a private viewing or test ride at our Nairobi showroom today.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link
-              to="/book-ride"
-              className="bg-background text-foreground px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors"
-            >
+            <Link to="/book-ride" className="bg-background text-foreground px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors">
               Book Appointment
             </Link>
-            <Link
-              to="/contact"
-              className="border-2 border-background text-background px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-background hover:text-accent transition-colors"
-            >
+            <Link to="/contact" className="border-2 border-background text-background px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-background hover:text-accent transition-colors">
               Contact Us
             </Link>
           </div>

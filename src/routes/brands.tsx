@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/page-shell";
-import { brands, bikes } from "@/data/bikes";
+import { brands } from "@/data/bikes";
+import { fetchPublishedBikes } from "@/lib/queries";
+import type { Bike } from "@/lib/types";
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/brands")({
@@ -16,6 +19,9 @@ export const Route = createFileRoute("/brands")({
 });
 
 function BrandsPage() {
+  const [bikes, setBikes] = useState<Bike[]>([]);
+  useEffect(() => { fetchPublishedBikes().then(setBikes).catch(() => {}); }, []);
+
   return (
     <PageShell>
       <section className="border-b border-border py-24">
@@ -36,14 +42,9 @@ function BrandsPage() {
                 <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-4">
                   {count > 0 ? `${count} model${count > 1 ? "s" : ""} available` : "Available on order"}
                 </p>
-                <h2 className="font-display text-3xl uppercase tracking-tight italic group-hover:text-accent transition-colors">
-                  {b.name}
-                </h2>
+                <h2 className="font-display text-3xl uppercase tracking-tight italic group-hover:text-accent transition-colors">{b.name}</h2>
                 <p className="text-muted-foreground text-sm leading-relaxed mt-4 mb-8">{b.description}</p>
-                <Link
-                  to="/bikes"
-                  className="text-xs font-bold uppercase tracking-widest border-b border-accent pb-1 inline-flex items-center gap-2"
-                >
+                <Link to="/bikes" className="text-xs font-bold uppercase tracking-widest border-b border-accent pb-1 inline-flex items-center gap-2">
                   View Models <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
