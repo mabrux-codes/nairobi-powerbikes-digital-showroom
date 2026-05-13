@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageShell } from "@/components/page-shell";
-import { bikes } from "@/data/bikes";
+import { fetchPublishedBikes } from "@/lib/queries";
+import type { Bike } from "@/lib/types";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/book-ride")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -20,7 +23,60 @@ export const Route = createFileRoute("/book-ride")({
 
 function BookRidePage() {
   const { bike: preselected } = Route.useSearch();
+  const [bikes, setBikes] = useState<Bike[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => { fetchPublishedBikes().then(setBikes).catch(() => {}); }, []);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const bikeId = String(fd.get("bike_id") ?? "");
+    const bike = bikes.find((b) => b.id === bikeId);
+    setSubmitting(true);
+
+    let licenseUrl: string | null = null;
+    const file = fd.get("license") as File | null;
+    if (file && file.size > 0) {
+      const path = `public/${crypto.randomUUID()}-${file.name}`;
+      const up = await supabase.storage.from("test-ride-licenses").upload(path, file);
+      if (!up.error) {
+        licenseUrl = up.data.path;
+      }
+    }
+
+    const { data, error } = await supabase.from("test_rides").insert({
+      bike_id: bike?.id ?? null,
+      bike_name: bike?.name ?? null,
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      phone: String(fd.get("phone") ?? ""),
+      preferred_date: String(fd.get("preferred_date") ?? ""),
+      preferred_time: String(fd.get("preferred_time") ?? ""),
+      notes: String(fd.get("notes") ?? ""),
+      license_url: licenseUrl,
+    }).select("id").maybeSingle();
+
+    if (error) {
+      toast.error("Couldn't save your booking. Try again.");
+      setSubmitting(false);
+      return;
+    }
+
+    // Fire confirmation email (best-effort; activates once email infra is configured)
+    try {
+      await fetch("/api/public/email/booking-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId: data?.id }),
+      });
+    } catch { /* ignore */ }
+
+    setSubmitting(false);
+    setSubmitted(true);
+  };
 
   return (
     <PageShell>
@@ -31,7 +87,7 @@ function BookRidePage() {
             Schedule a <span className="text-accent">private session.</span>
           </h1>
           <p className="text-muted-foreground max-w-xl mt-6">
-            Bring your license. We'll handle the rest. Confirmation by email and SMS within minutes.
+            Bring your license. We'll handle the rest. Confirmation sent to your inbox within minutes.
           </p>
         </div>
       </section>
@@ -41,42 +97,34 @@ function BookRidePage() {
           <div className="border border-accent bg-accent/10 p-8">
             <h2 className="font-display text-2xl uppercase tracking-tight mb-3">Booking confirmed</h2>
             <p className="text-muted-foreground">
-              We've received your request. A team member will call you within the next hour to finalize details.
+              We've received your request and emailed you a confirmation. A team member will call to finalize details.
             </p>
           </div>
         ) : (
-          <form
-            onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
-            className="grid gap-5"
-          >
+          <form onSubmit={onSubmit} className="grid gap-5">
             <Field label="Select Bike">
-              <select required defaultValue={preselected ?? ""} className="form-input">
+              <select name="bike_id" required defaultValue={preselected ?? ""} className="form-input">
                 <option value="" disabled>Choose a bike...</option>
-                {bikes.map((b) => (
-                  <option key={b.id} value={b.id}>{b.name}</option>
-                ))}
+                {bikes.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
               </select>
             </Field>
             <div className="grid sm:grid-cols-2 gap-5">
-              <Field label="Preferred Date"><input required type="date" className="form-input" /></Field>
-              <Field label="Preferred Time"><input required type="time" className="form-input" /></Field>
+              <Field label="Preferred Date"><input name="preferred_date" required type="date" className="form-input" /></Field>
+              <Field label="Preferred Time"><input name="preferred_time" required type="time" className="form-input" /></Field>
             </div>
-            <Field label="Full Name"><input required className="form-input" /></Field>
+            <Field label="Full Name"><input name="name" required className="form-input" /></Field>
             <div className="grid sm:grid-cols-2 gap-5">
-              <Field label="Phone"><input required type="tel" className="form-input" /></Field>
-              <Field label="Email"><input required type="email" className="form-input" /></Field>
+              <Field label="Phone"><input name="phone" required type="tel" className="form-input" /></Field>
+              <Field label="Email"><input name="email" required type="email" className="form-input" /></Field>
             </div>
             <Field label="Driver's License (Upload)">
-              <input type="file" accept="image/*,.pdf" className="form-input file:bg-surface file:border-0 file:text-foreground file:px-3 file:py-1 file:mr-3 file:font-mono file:text-[10px] file:uppercase file:tracking-widest" />
+              <input name="license" type="file" accept="image/*,.pdf" className="form-input file:bg-surface file:border-0 file:text-foreground file:px-3 file:py-1 file:mr-3 file:font-mono file:text-[10px] file:uppercase file:tracking-widest" />
             </Field>
             <Field label="Additional Notes">
-              <textarea rows={3} className="form-input resize-none" placeholder="Anything we should know?" />
+              <textarea name="notes" rows={3} className="form-input resize-none" placeholder="Anything we should know?" />
             </Field>
-            <button
-              type="submit"
-              className="bg-accent text-accent-foreground px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors mt-4 justify-self-start"
-            >
-              Confirm Booking
+            <button type="submit" disabled={submitting} className="bg-accent text-accent-foreground px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors mt-4 justify-self-start disabled:opacity-50">
+              {submitting ? "Submitting..." : "Confirm Booking"}
             </button>
             <style>{`.form-input{width:100%;background:var(--background);border:1px solid var(--border);padding:0.75rem 1rem;font-size:0.875rem;outline:none;font-family:inherit;color:inherit}.form-input:focus{border-color:var(--accent)}`}</style>
           </form>
