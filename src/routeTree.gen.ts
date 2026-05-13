@@ -9,17 +9,43 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WishlistRouteImport } from './routes/wishlist'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as BookRideRouteImport } from './routes/book-ride'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BikesIndexRouteImport } from './routes/bikes.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as BikesBikeIdRouteImport } from './routes/bikes.$bikeId'
+import { Route as AdminTestRidesRouteImport } from './routes/admin.test-rides'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
+import { Route as AdminBikesRouteImport } from './routes/admin.bikes'
+import { Route as AdminBikesIdRouteImport } from './routes/admin.bikes.$id'
+import { Route as ApiPublicEmailBookingConfirmationRouteImport } from './routes/api/public/email/booking-confirmation'
 
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BrandsRoute = BrandsRouteImport.update({
@@ -30,6 +56,11 @@ const BrandsRoute = BrandsRouteImport.update({
 const BookRideRoute = BookRideRouteImport.update({
   id: '/book-ride',
   path: '/book-ride',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -47,87 +78,213 @@ const BikesIndexRoute = BikesIndexRouteImport.update({
   path: '/bikes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const BikesBikeIdRoute = BikesBikeIdRouteImport.update({
   id: '/bikes/$bikeId',
   path: '/bikes/$bikeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTestRidesRoute = AdminTestRidesRouteImport.update({
+  id: '/test-rides',
+  path: '/test-rides',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInquiriesRoute = AdminInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBikesRoute = AdminBikesRouteImport.update({
+  id: '/bikes',
+  path: '/bikes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBikesIdRoute = AdminBikesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminBikesRoute,
+} as any)
+const ApiPublicEmailBookingConfirmationRoute =
+  ApiPublicEmailBookingConfirmationRouteImport.update({
+    id: '/api/public/email/booking-confirmation',
+    path: '/api/public/email/booking-confirmation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/book-ride': typeof BookRideRoute
   '/brands': typeof BrandsRoute
+  '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/wishlist': typeof WishlistRoute
+  '/admin/bikes': typeof AdminBikesRouteWithChildren
+  '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/test-rides': typeof AdminTestRidesRoute
   '/bikes/$bikeId': typeof BikesBikeIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/bikes/': typeof BikesIndexRoute
+  '/admin/bikes/$id': typeof AdminBikesIdRoute
+  '/api/public/email/booking-confirmation': typeof ApiPublicEmailBookingConfirmationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/book-ride': typeof BookRideRoute
   '/brands': typeof BrandsRoute
+  '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/wishlist': typeof WishlistRoute
+  '/admin/bikes': typeof AdminBikesRouteWithChildren
+  '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/test-rides': typeof AdminTestRidesRoute
   '/bikes/$bikeId': typeof BikesBikeIdRoute
+  '/admin': typeof AdminIndexRoute
   '/bikes': typeof BikesIndexRoute
+  '/admin/bikes/$id': typeof AdminBikesIdRoute
+  '/api/public/email/booking-confirmation': typeof ApiPublicEmailBookingConfirmationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/book-ride': typeof BookRideRoute
   '/brands': typeof BrandsRoute
+  '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/wishlist': typeof WishlistRoute
+  '/admin/bikes': typeof AdminBikesRouteWithChildren
+  '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/test-rides': typeof AdminTestRidesRoute
   '/bikes/$bikeId': typeof BikesBikeIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/bikes/': typeof BikesIndexRoute
+  '/admin/bikes/$id': typeof AdminBikesIdRoute
+  '/api/public/email/booking-confirmation': typeof ApiPublicEmailBookingConfirmationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/book-ride'
     | '/brands'
+    | '/compare'
     | '/contact'
+    | '/login'
+    | '/wishlist'
+    | '/admin/bikes'
+    | '/admin/inquiries'
+    | '/admin/settings'
+    | '/admin/test-rides'
     | '/bikes/$bikeId'
+    | '/admin/'
     | '/bikes/'
+    | '/admin/bikes/$id'
+    | '/api/public/email/booking-confirmation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/book-ride'
     | '/brands'
+    | '/compare'
     | '/contact'
+    | '/login'
+    | '/wishlist'
+    | '/admin/bikes'
+    | '/admin/inquiries'
+    | '/admin/settings'
+    | '/admin/test-rides'
     | '/bikes/$bikeId'
+    | '/admin'
     | '/bikes'
+    | '/admin/bikes/$id'
+    | '/api/public/email/booking-confirmation'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/book-ride'
     | '/brands'
+    | '/compare'
     | '/contact'
+    | '/login'
+    | '/wishlist'
+    | '/admin/bikes'
+    | '/admin/inquiries'
+    | '/admin/settings'
+    | '/admin/test-rides'
     | '/bikes/$bikeId'
+    | '/admin/'
     | '/bikes/'
+    | '/admin/bikes/$id'
+    | '/api/public/email/booking-confirmation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   BookRideRoute: typeof BookRideRoute
   BrandsRoute: typeof BrandsRoute
+  CompareRoute: typeof CompareRoute
   ContactRoute: typeof ContactRoute
+  LoginRoute: typeof LoginRoute
+  WishlistRoute: typeof WishlistRoute
   BikesBikeIdRoute: typeof BikesBikeIdRoute
   BikesIndexRoute: typeof BikesIndexRoute
+  ApiPublicEmailBookingConfirmationRoute: typeof ApiPublicEmailBookingConfirmationRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/brands': {
@@ -142,6 +299,13 @@ declare module '@tanstack/react-router' {
       path: '/book-ride'
       fullPath: '/book-ride'
       preLoaderRoute: typeof BookRideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -165,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BikesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/bikes/$bikeId': {
       id: '/bikes/$bikeId'
       path: '/bikes/$bikeId'
@@ -172,17 +343,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BikesBikeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/test-rides': {
+      id: '/admin/test-rides'
+      path: '/test-rides'
+      fullPath: '/admin/test-rides'
+      preLoaderRoute: typeof AdminTestRidesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inquiries': {
+      id: '/admin/inquiries'
+      path: '/inquiries'
+      fullPath: '/admin/inquiries'
+      preLoaderRoute: typeof AdminInquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bikes': {
+      id: '/admin/bikes'
+      path: '/bikes'
+      fullPath: '/admin/bikes'
+      preLoaderRoute: typeof AdminBikesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bikes/$id': {
+      id: '/admin/bikes/$id'
+      path: '/$id'
+      fullPath: '/admin/bikes/$id'
+      preLoaderRoute: typeof AdminBikesIdRouteImport
+      parentRoute: typeof AdminBikesRoute
+    }
+    '/api/public/email/booking-confirmation': {
+      id: '/api/public/email/booking-confirmation'
+      path: '/api/public/email/booking-confirmation'
+      fullPath: '/api/public/email/booking-confirmation'
+      preLoaderRoute: typeof ApiPublicEmailBookingConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
+
+interface AdminBikesRouteChildren {
+  AdminBikesIdRoute: typeof AdminBikesIdRoute
+}
+
+const AdminBikesRouteChildren: AdminBikesRouteChildren = {
+  AdminBikesIdRoute: AdminBikesIdRoute,
+}
+
+const AdminBikesRouteWithChildren = AdminBikesRoute._addFileChildren(
+  AdminBikesRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminBikesRoute: typeof AdminBikesRouteWithChildren
+  AdminInquiriesRoute: typeof AdminInquiriesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTestRidesRoute: typeof AdminTestRidesRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminBikesRoute: AdminBikesRouteWithChildren,
+  AdminInquiriesRoute: AdminInquiriesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTestRidesRoute: AdminTestRidesRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   BookRideRoute: BookRideRoute,
   BrandsRoute: BrandsRoute,
+  CompareRoute: CompareRoute,
   ContactRoute: ContactRoute,
+  LoginRoute: LoginRoute,
+  WishlistRoute: WishlistRoute,
   BikesBikeIdRoute: BikesBikeIdRoute,
   BikesIndexRoute: BikesIndexRoute,
+  ApiPublicEmailBookingConfirmationRoute:
+    ApiPublicEmailBookingConfirmationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
