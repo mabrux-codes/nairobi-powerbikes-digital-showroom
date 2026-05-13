@@ -14,16 +14,259 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bikes: {
+        Row: {
+          available: boolean
+          badge: string | null
+          brand: string
+          condition: string
+          created_at: string
+          description: string
+          engine: number
+          features: Json
+          id: string
+          image: string
+          images: Json
+          mileage: string
+          name: string
+          power: string
+          price: number
+          published: boolean
+          slug: string
+          transmission: string
+          type: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          available?: boolean
+          badge?: string | null
+          brand: string
+          condition?: string
+          created_at?: string
+          description?: string
+          engine?: number
+          features?: Json
+          id?: string
+          image?: string
+          images?: Json
+          mileage?: string
+          name: string
+          power?: string
+          price?: number
+          published?: boolean
+          slug: string
+          transmission?: string
+          type: string
+          updated_at?: string
+          year?: number
+        }
+        Update: {
+          available?: boolean
+          badge?: string | null
+          brand?: string
+          condition?: string
+          created_at?: string
+          description?: string
+          engine?: number
+          features?: Json
+          id?: string
+          image?: string
+          images?: Json
+          mileage?: string
+          name?: string
+          power?: string
+          price?: number
+          published?: boolean
+          slug?: string
+          transmission?: string
+          type?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      inquiries: {
+        Row: {
+          admin_notes: string | null
+          bike_id: string | null
+          bike_name: string | null
+          created_at: string
+          email: string
+          follow_up_at: string | null
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          bike_id?: string | null
+          bike_name?: string | null
+          created_at?: string
+          email: string
+          follow_up_at?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          bike_id?: string | null
+          bike_name?: string | null
+          created_at?: string
+          email?: string
+          follow_up_at?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_bike_id_fkey"
+            columns: ["bike_id"]
+            isOneToOne: false
+            referencedRelation: "bikes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_settings: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          id: number
+          logo_url: string | null
+          site_name: string
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          id?: number
+          logo_url?: string | null
+          site_name?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          id?: number
+          logo_url?: string | null
+          site_name?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      test_rides: {
+        Row: {
+          admin_notes: string | null
+          bike_id: string | null
+          bike_name: string | null
+          created_at: string
+          email: string
+          follow_up_at: string | null
+          id: string
+          license_url: string | null
+          name: string
+          notes: string | null
+          phone: string
+          preferred_date: string
+          preferred_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          bike_id?: string | null
+          bike_name?: string | null
+          created_at?: string
+          email: string
+          follow_up_at?: string | null
+          id?: string
+          license_url?: string | null
+          name: string
+          notes?: string | null
+          phone: string
+          preferred_date: string
+          preferred_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          bike_id?: string | null
+          bike_name?: string | null
+          created_at?: string
+          email?: string
+          follow_up_at?: string | null
+          id?: string
+          license_url?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          preferred_date?: string
+          preferred_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_rides_bike_id_fkey"
+            columns: ["bike_id"]
+            isOneToOne: false
+            referencedRelation: "bikes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +393,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
