@@ -126,7 +126,7 @@ function BikeDetailPage() {
       <section className="py-16 container-x">
         <h2 className="font-display text-3xl uppercase tracking-tight mb-8">Features</h2>
         <ul className="grid sm:grid-cols-2 gap-4 max-w-3xl">
-          {bike.features.map((f) => (
+          {bike.features.map((f: string) => (
             <li key={f} className="flex items-start gap-3">
               <Check className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
               <span className="text-foreground/90">{f}</span>
