@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
+import { Route as SalesRouteImport } from './routes/sales'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CompareRouteImport } from './routes/compare'
@@ -18,18 +19,31 @@ import { Route as BookRideRouteImport } from './routes/book-ride'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SalesIndexRouteImport } from './routes/sales.index'
 import { Route as BikesIndexRouteImport } from './routes/bikes.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as SalesTestRidesRouteImport } from './routes/sales.test-rides'
+import { Route as SalesInquiriesRouteImport } from './routes/sales.inquiries'
 import { Route as BikesBikeIdRouteImport } from './routes/bikes.$bikeId'
 import { Route as AdminTestRidesRouteImport } from './routes/admin.test-rides'
+import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminSalesPeopleRouteImport } from './routes/admin.sales-people'
+import { Route as AdminSalesRouteImport } from './routes/admin.sales'
 import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
+import { Route as AdminContactMessagesRouteImport } from './routes/admin.contact-messages'
+import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
 import { Route as AdminBikesRouteImport } from './routes/admin.bikes'
 import { Route as AdminBikesIdRouteImport } from './routes/admin.bikes.$id'
 
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
   path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalesRoute = SalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -72,6 +86,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SalesIndexRoute = SalesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SalesRoute,
+} as any)
 const BikesIndexRoute = BikesIndexRouteImport.update({
   id: '/bikes/',
   path: '/bikes/',
@@ -81,6 +100,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const SalesTestRidesRoute = SalesTestRidesRouteImport.update({
+  id: '/test-rides',
+  path: '/test-rides',
+  getParentRoute: () => SalesRoute,
+} as any)
+const SalesInquiriesRoute = SalesInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
+  getParentRoute: () => SalesRoute,
 } as any)
 const BikesBikeIdRoute = BikesBikeIdRouteImport.update({
   id: '/bikes/$bikeId',
@@ -92,14 +121,39 @@ const AdminTestRidesRoute = AdminTestRidesRouteImport.update({
   path: '/test-rides',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSalesPeopleRoute = AdminSalesPeopleRouteImport.update({
+  id: '/sales-people',
+  path: '/sales-people',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSalesRoute = AdminSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminInquiriesRoute = AdminInquiriesRouteImport.update({
   id: '/inquiries',
   path: '/inquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactMessagesRoute = AdminContactMessagesRouteImport.update({
+  id: '/contact-messages',
+  path: '/contact-messages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBrandsRoute = AdminBrandsRouteImport.update({
+  id: '/brands',
+  path: '/brands',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminBikesRoute = AdminBikesRouteImport.update({
@@ -122,14 +176,23 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/sales': typeof SalesRouteWithChildren
   '/wishlist': typeof WishlistRoute
   '/admin/bikes': typeof AdminBikesRouteWithChildren
+  '/admin/brands': typeof AdminBrandsRoute
+  '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/sales': typeof AdminSalesRoute
+  '/admin/sales-people': typeof AdminSalesPeopleRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/admin/test-rides': typeof AdminTestRidesRoute
   '/bikes/$bikeId': typeof BikesBikeIdRoute
+  '/sales/inquiries': typeof SalesInquiriesRoute
+  '/sales/test-rides': typeof SalesTestRidesRoute
   '/admin/': typeof AdminIndexRoute
   '/bikes/': typeof BikesIndexRoute
+  '/sales/': typeof SalesIndexRoute
   '/admin/bikes/$id': typeof AdminBikesIdRoute
 }
 export interface FileRoutesByTo {
@@ -142,12 +205,20 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/wishlist': typeof WishlistRoute
   '/admin/bikes': typeof AdminBikesRouteWithChildren
+  '/admin/brands': typeof AdminBrandsRoute
+  '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/sales': typeof AdminSalesRoute
+  '/admin/sales-people': typeof AdminSalesPeopleRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/admin/test-rides': typeof AdminTestRidesRoute
   '/bikes/$bikeId': typeof BikesBikeIdRoute
+  '/sales/inquiries': typeof SalesInquiriesRoute
+  '/sales/test-rides': typeof SalesTestRidesRoute
   '/admin': typeof AdminIndexRoute
   '/bikes': typeof BikesIndexRoute
+  '/sales': typeof SalesIndexRoute
   '/admin/bikes/$id': typeof AdminBikesIdRoute
 }
 export interface FileRoutesById {
@@ -160,14 +231,23 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/sales': typeof SalesRouteWithChildren
   '/wishlist': typeof WishlistRoute
   '/admin/bikes': typeof AdminBikesRouteWithChildren
+  '/admin/brands': typeof AdminBrandsRoute
+  '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/sales': typeof AdminSalesRoute
+  '/admin/sales-people': typeof AdminSalesPeopleRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/admin/test-rides': typeof AdminTestRidesRoute
   '/bikes/$bikeId': typeof BikesBikeIdRoute
+  '/sales/inquiries': typeof SalesInquiriesRoute
+  '/sales/test-rides': typeof SalesTestRidesRoute
   '/admin/': typeof AdminIndexRoute
   '/bikes/': typeof BikesIndexRoute
+  '/sales/': typeof SalesIndexRoute
   '/admin/bikes/$id': typeof AdminBikesIdRoute
 }
 export interface FileRouteTypes {
@@ -181,14 +261,23 @@ export interface FileRouteTypes {
     | '/compare'
     | '/contact'
     | '/login'
+    | '/sales'
     | '/wishlist'
     | '/admin/bikes'
+    | '/admin/brands'
+    | '/admin/contact-messages'
     | '/admin/inquiries'
+    | '/admin/sales'
+    | '/admin/sales-people'
     | '/admin/settings'
+    | '/admin/team'
     | '/admin/test-rides'
     | '/bikes/$bikeId'
+    | '/sales/inquiries'
+    | '/sales/test-rides'
     | '/admin/'
     | '/bikes/'
+    | '/sales/'
     | '/admin/bikes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -201,12 +290,20 @@ export interface FileRouteTypes {
     | '/login'
     | '/wishlist'
     | '/admin/bikes'
+    | '/admin/brands'
+    | '/admin/contact-messages'
     | '/admin/inquiries'
+    | '/admin/sales'
+    | '/admin/sales-people'
     | '/admin/settings'
+    | '/admin/team'
     | '/admin/test-rides'
     | '/bikes/$bikeId'
+    | '/sales/inquiries'
+    | '/sales/test-rides'
     | '/admin'
     | '/bikes'
+    | '/sales'
     | '/admin/bikes/$id'
   id:
     | '__root__'
@@ -218,14 +315,23 @@ export interface FileRouteTypes {
     | '/compare'
     | '/contact'
     | '/login'
+    | '/sales'
     | '/wishlist'
     | '/admin/bikes'
+    | '/admin/brands'
+    | '/admin/contact-messages'
     | '/admin/inquiries'
+    | '/admin/sales'
+    | '/admin/sales-people'
     | '/admin/settings'
+    | '/admin/team'
     | '/admin/test-rides'
     | '/bikes/$bikeId'
+    | '/sales/inquiries'
+    | '/sales/test-rides'
     | '/admin/'
     | '/bikes/'
+    | '/sales/'
     | '/admin/bikes/$id'
   fileRoutesById: FileRoutesById
 }
@@ -238,6 +344,7 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
+  SalesRoute: typeof SalesRouteWithChildren
   WishlistRoute: typeof WishlistRoute
   BikesBikeIdRoute: typeof BikesBikeIdRoute
   BikesIndexRoute: typeof BikesIndexRoute
@@ -250,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/wishlist'
       fullPath: '/wishlist'
       preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales': {
+      id: '/sales'
+      path: '/sales'
+      fullPath: '/sales'
+      preLoaderRoute: typeof SalesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -308,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sales/': {
+      id: '/sales/'
+      path: '/'
+      fullPath: '/sales/'
+      preLoaderRoute: typeof SalesIndexRouteImport
+      parentRoute: typeof SalesRoute
+    }
     '/bikes/': {
       id: '/bikes/'
       path: '/bikes'
@@ -321,6 +442,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/sales/test-rides': {
+      id: '/sales/test-rides'
+      path: '/test-rides'
+      fullPath: '/sales/test-rides'
+      preLoaderRoute: typeof SalesTestRidesRouteImport
+      parentRoute: typeof SalesRoute
+    }
+    '/sales/inquiries': {
+      id: '/sales/inquiries'
+      path: '/inquiries'
+      fullPath: '/sales/inquiries'
+      preLoaderRoute: typeof SalesInquiriesRouteImport
+      parentRoute: typeof SalesRoute
     }
     '/bikes/$bikeId': {
       id: '/bikes/$bikeId'
@@ -336,6 +471,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTestRidesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -343,11 +485,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sales-people': {
+      id: '/admin/sales-people'
+      path: '/sales-people'
+      fullPath: '/admin/sales-people'
+      preLoaderRoute: typeof AdminSalesPeopleRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sales': {
+      id: '/admin/sales'
+      path: '/sales'
+      fullPath: '/admin/sales'
+      preLoaderRoute: typeof AdminSalesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/inquiries': {
       id: '/admin/inquiries'
       path: '/inquiries'
       fullPath: '/admin/inquiries'
       preLoaderRoute: typeof AdminInquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contact-messages': {
+      id: '/admin/contact-messages'
+      path: '/contact-messages'
+      fullPath: '/admin/contact-messages'
+      preLoaderRoute: typeof AdminContactMessagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/brands': {
+      id: '/admin/brands'
+      path: '/brands'
+      fullPath: '/admin/brands'
+      preLoaderRoute: typeof AdminBrandsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/bikes': {
@@ -381,21 +551,45 @@ const AdminBikesRouteWithChildren = AdminBikesRoute._addFileChildren(
 
 interface AdminRouteChildren {
   AdminBikesRoute: typeof AdminBikesRouteWithChildren
+  AdminBrandsRoute: typeof AdminBrandsRoute
+  AdminContactMessagesRoute: typeof AdminContactMessagesRoute
   AdminInquiriesRoute: typeof AdminInquiriesRoute
+  AdminSalesRoute: typeof AdminSalesRoute
+  AdminSalesPeopleRoute: typeof AdminSalesPeopleRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTeamRoute: typeof AdminTeamRoute
   AdminTestRidesRoute: typeof AdminTestRidesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminBikesRoute: AdminBikesRouteWithChildren,
+  AdminBrandsRoute: AdminBrandsRoute,
+  AdminContactMessagesRoute: AdminContactMessagesRoute,
   AdminInquiriesRoute: AdminInquiriesRoute,
+  AdminSalesRoute: AdminSalesRoute,
+  AdminSalesPeopleRoute: AdminSalesPeopleRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminTeamRoute: AdminTeamRoute,
   AdminTestRidesRoute: AdminTestRidesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface SalesRouteChildren {
+  SalesInquiriesRoute: typeof SalesInquiriesRoute
+  SalesTestRidesRoute: typeof SalesTestRidesRoute
+  SalesIndexRoute: typeof SalesIndexRoute
+}
+
+const SalesRouteChildren: SalesRouteChildren = {
+  SalesInquiriesRoute: SalesInquiriesRoute,
+  SalesTestRidesRoute: SalesTestRidesRoute,
+  SalesIndexRoute: SalesIndexRoute,
+}
+
+const SalesRouteWithChildren = SalesRoute._addFileChildren(SalesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -406,6 +600,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
+  SalesRoute: SalesRouteWithChildren,
   WishlistRoute: WishlistRoute,
   BikesBikeIdRoute: BikesBikeIdRoute,
   BikesIndexRoute: BikesIndexRoute,
