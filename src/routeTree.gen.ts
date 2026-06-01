@@ -26,7 +26,6 @@ import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
 import { Route as AdminBikesRouteImport } from './routes/admin.bikes'
 import { Route as AdminBikesIdRouteImport } from './routes/admin.bikes.$id'
-import { Route as ApiPublicEmailBookingConfirmationRouteImport } from './routes/api/public/email/booking-confirmation'
 
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
@@ -113,12 +112,6 @@ const AdminBikesIdRoute = AdminBikesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AdminBikesRoute,
 } as any)
-const ApiPublicEmailBookingConfirmationRoute =
-  ApiPublicEmailBookingConfirmationRouteImport.update({
-    id: '/api/public/email/booking-confirmation',
-    path: '/api/public/email/booking-confirmation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,7 +131,6 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/bikes/': typeof BikesIndexRoute
   '/admin/bikes/$id': typeof AdminBikesIdRoute
-  '/api/public/email/booking-confirmation': typeof ApiPublicEmailBookingConfirmationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,7 +149,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/bikes': typeof BikesIndexRoute
   '/admin/bikes/$id': typeof AdminBikesIdRoute
-  '/api/public/email/booking-confirmation': typeof ApiPublicEmailBookingConfirmationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -178,7 +169,6 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/bikes/': typeof BikesIndexRoute
   '/admin/bikes/$id': typeof AdminBikesIdRoute
-  '/api/public/email/booking-confirmation': typeof ApiPublicEmailBookingConfirmationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -200,7 +190,6 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/bikes/'
     | '/admin/bikes/$id'
-    | '/api/public/email/booking-confirmation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -219,7 +208,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bikes'
     | '/admin/bikes/$id'
-    | '/api/public/email/booking-confirmation'
   id:
     | '__root__'
     | '/'
@@ -239,7 +227,6 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/bikes/'
     | '/admin/bikes/$id'
-    | '/api/public/email/booking-confirmation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -254,7 +241,6 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   BikesBikeIdRoute: typeof BikesBikeIdRoute
   BikesIndexRoute: typeof BikesIndexRoute
-  ApiPublicEmailBookingConfirmationRoute: typeof ApiPublicEmailBookingConfirmationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -378,13 +364,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBikesIdRouteImport
       parentRoute: typeof AdminBikesRoute
     }
-    '/api/public/email/booking-confirmation': {
-      id: '/api/public/email/booking-confirmation'
-      path: '/api/public/email/booking-confirmation'
-      fullPath: '/api/public/email/booking-confirmation'
-      preLoaderRoute: typeof ApiPublicEmailBookingConfirmationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -430,9 +409,17 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   BikesBikeIdRoute: BikesBikeIdRoute,
   BikesIndexRoute: BikesIndexRoute,
-  ApiPublicEmailBookingConfirmationRoute:
-    ApiPublicEmailBookingConfirmationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
