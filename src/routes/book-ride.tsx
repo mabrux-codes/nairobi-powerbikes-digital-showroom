@@ -35,19 +35,37 @@ function BookRidePage() {
     const fd = new FormData(form);
     const bikeId = String(fd.get("bike_id") ?? "");
     const bike = bikes.find((b) => b.id === bikeId);
+
+    const file = fd.get("license") as File | null;
+    if (file && file.size > 0) {
+      const MAX = 10 * 1024 * 1024;
+      const ALLOWED = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+      if (file.size > MAX) {
+        toast.error("License file must be 10MB or smaller.");
+        return;
+      }
+      if (!ALLOWED.includes(file.type)) {
+        toast.error("License must be a JPG, PNG, WEBP, or PDF.");
+        return;
+      }
+    }
+
     setSubmitting(true);
 
     let licenseUrl: string | null = null;
-    const file = fd.get("license") as File | null;
     if (file && file.size > 0) {
-      const path = `public/${crypto.randomUUID()}-${file.name}`;
-      const up = await supabase.storage.from("test-ride-licenses").upload(path, file);
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
+      const path = `public/${crypto.randomUUID()}-${safeName}`;
+      const up = await supabase.storage.from("test-ride-licenses").upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
       if (!up.error) {
         licenseUrl = up.data.path;
       }
     }
 
-    const { data, error } = await supabase.from("test_rides").insert({
+    const { error } = await supabase.from("test_rides").insert({
       bike_id: bike?.id ?? null,
       bike_name: bike?.name ?? null,
       name: String(fd.get("name") ?? ""),
@@ -64,15 +82,6 @@ function BookRidePage() {
       setSubmitting(false);
       return;
     }
-
-    // Fire confirmation email (best-effort; activates once email infra is configured)
-    try {
-      await fetch("/api/public/email/booking-confirmation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId: data?.id }),
-      });
-    } catch { /* ignore */ }
 
     setSubmitting(false);
     setSubmitted(true);
