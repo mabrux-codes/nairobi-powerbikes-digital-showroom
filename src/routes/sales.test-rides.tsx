@@ -1,51 +1,39 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useServerFn } from "@tanstack/react-start";
-import { listTeamUsers } from "@/lib/admin-users.functions";
+import { useAuth } from "@/hooks/use-auth";
 import type { TestRide } from "@/lib/types";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/admin/test-rides")({ component: TestRidesAdmin });
+export const Route = createFileRoute("/sales/test-rides")({ component: MyRides });
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled", "no-show"];
 
-function TestRidesAdmin() {
-  const fnList = useServerFn(listTeamUsers);
+function MyRides() {
+  const { user } = useAuth();
   const [items, setItems] = useState<TestRide[]>([]);
-  const [team, setTeam] = useState<{ id: string; name: string; email: string }[]>([]);
-
   const load = async () => {
-    const { data } = await supabase.from("test_rides").select("*").order("preferred_date", { ascending: true });
+    if (!user) return;
+    const { data } = await supabase.from("test_rides").select("*").eq("assigned_to", user.id).order("preferred_date");
     setItems((data ?? []) as unknown as TestRide[]);
   };
-  useEffect(() => {
-    load();
-    fnList().then((r) => setTeam(r.users.filter((u) => u.roles.includes("salesperson") || u.roles.includes("admin")))).catch(() => {});
-  }, []);
+  useEffect(() => { load(); }, [user]);
 
   const update = async (id: string, patch: Partial<TestRide>) => {
     const { error } = await supabase.from("test_rides").update(patch).eq("id", id);
     if (error) toast.error(error.message); else load();
   };
 
-  const licenseUrl = async (path: string) => {
-    const { data } = await supabase.storage.from("test-ride-licenses").createSignedUrl(path, 60 * 10);
-    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
-  };
-
   return (
     <div className="p-8">
-      <h1 className="font-display text-4xl uppercase tracking-tight mb-8">Test Rides</h1>
+      <h1 className="font-display text-4xl uppercase tracking-tight mb-8">My Test Rides</h1>
       <div className="grid gap-4">
         {items.map((r) => (
           <div key={r.id} className="border border-border p-5 bg-surface">
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <p className="font-display text-lg uppercase">{r.name}</p>
-                <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest mt-1">
-                  {r.bike_name ?? "Any bike"} · {r.preferred_date} {r.preferred_time}
-                </p>
+                <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest mt-1">{r.bike_name ?? "Any bike"} · {r.preferred_date} {r.preferred_time}</p>
                 <p className="text-xs text-muted-foreground font-mono mt-1">{r.email} · {r.phone}</p>
               </div>
               <select value={r.status} onChange={(e) => update(r.id, { status: e.target.value })}
@@ -54,18 +42,7 @@ function TestRidesAdmin() {
               </select>
             </div>
             {r.notes && <p className="mt-3 text-sm">{r.notes}</p>}
-            {r.license_url && (
-              <button onClick={() => licenseUrl(r.license_url!)} className="text-xs text-accent underline mt-2">View license</button>
-            )}
-            <div className="grid sm:grid-cols-3 gap-3 mt-4">
-              <label className="block">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Assign to</span>
-                <select value={r.assigned_to ?? ""} onChange={(e) => update(r.id, { assigned_to: e.target.value || null })}
-                  className="w-full bg-background border border-border px-2 py-1.5 mt-1 text-sm">
-                  <option value="">Unassigned</option>
-                  {team.map((u) => <option key={u.id} value={u.id}>{u.name || u.email}</option>)}
-                </select>
-              </label>
+            <div className="grid sm:grid-cols-2 gap-3 mt-4">
               <label className="block">
                 <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Follow-up</span>
                 <input type="datetime-local" defaultValue={r.follow_up_at ? r.follow_up_at.slice(0, 16) : ""}
@@ -78,9 +55,13 @@ function TestRidesAdmin() {
                   className="w-full bg-background border border-border px-2 py-1.5 mt-1 text-sm" />
               </label>
             </div>
+            <div className="flex gap-4 mt-4">
+              <a href={`mailto:${r.email}`} className="text-xs text-accent underline">Email</a>
+              <a href={`https://wa.me/${r.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-xs text-accent underline">WhatsApp</a>
+            </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-muted-foreground py-12 text-center">No test rides yet.</p>}
+        {items.length === 0 && <p className="text-muted-foreground py-12 text-center">No test rides assigned to you yet.</p>}
       </div>
     </div>
   );

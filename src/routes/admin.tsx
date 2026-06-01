@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { LayoutDashboard, Bike, MessageSquare, CalendarCheck, Settings, LogOut, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Bike, MessageSquare, CalendarCheck, Settings, LogOut, ArrowLeft, Tag, Users, Mail, BadgeDollarSign, UserPlus } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,
@@ -24,7 +24,7 @@ function AdminLayout() {
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md text-center">
           <h1 className="font-display text-3xl uppercase mb-4">Access denied</h1>
-          <p className="text-muted-foreground mb-6">Your account doesn't have admin permissions. Ask an existing admin to grant access.</p>
+          <p className="text-muted-foreground mb-6">Your account doesn't have admin permissions. Salespeople can use the <Link to="/sales" className="text-accent underline">sales dashboard</Link>.</p>
           <button onClick={async () => { await signOut(); navigate({ to: "/login" }); }} className="border border-border px-6 py-3 text-xs font-bold uppercase tracking-widest">Sign out</button>
         </div>
       </div>
@@ -38,11 +38,16 @@ function AdminLayout() {
           <Link to="/" className="font-display text-xl uppercase italic tracking-tighter">Nairobi<span className="text-accent">Power</span></Link>
           <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-1">Admin</p>
         </div>
-        <nav className="flex-1 p-3 flex flex-col gap-1 text-sm">
+        <nav className="flex-1 p-3 flex flex-col gap-1 text-sm overflow-y-auto">
           <NavLink to="/admin" icon={LayoutDashboard} label="Overview" exact />
           <NavLink to="/admin/bikes" icon={Bike} label="Bikes" />
+          <NavLink to="/admin/brands" icon={Tag} label="Brands" />
+          <NavLink to="/admin/team" icon={Users} label="About / Team" />
           <NavLink to="/admin/inquiries" icon={MessageSquare} label="Inquiries" />
           <NavLink to="/admin/test-rides" icon={CalendarCheck} label="Test Rides" />
+          <NavLink to="/admin/contact-messages" icon={Mail} label="Contact Messages" />
+          <NavLink to="/admin/sales" icon={BadgeDollarSign} label="Sales" />
+          <NavLink to="/admin/sales-people" icon={UserPlus} label="Sales Team" />
           <NavLink to="/admin/settings" icon={Settings} label="Settings" />
         </nav>
         <div className="p-3 border-t border-border flex flex-col gap-2">
