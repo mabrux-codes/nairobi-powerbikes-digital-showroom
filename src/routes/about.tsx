@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { PageShell } from "@/components/page-shell";
 import { Target, Eye, Heart } from "lucide-react";
+import { fetchPublishedTeam } from "@/lib/queries";
+import type { TeamMember } from "@/lib/types";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -15,6 +18,9 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  useEffect(() => { fetchPublishedTeam().then(setTeam).catch(() => {}); }, []);
+
   return (
     <PageShell>
       <section className="border-b border-border py-24">
@@ -30,15 +36,9 @@ function AboutPage() {
         <div>
           <h2 className="font-display text-3xl uppercase tracking-tight mb-6">Our Story</h2>
           <div className="space-y-4 text-muted-foreground leading-relaxed">
-            <p>
-              Nairobi Powerbikes started in a small Industrial Area garage in 2017 with a single Ducati and a stubborn belief that Kenya deserved access to the world's finest motorcycles — without the import nightmare.
-            </p>
-            <p>
-              Today we operate Kenya's most trusted high-performance dealership, importing and servicing premium machines from Yamaha, Honda, Kawasaki, Ducati, BMW, KTM and more.
-            </p>
-            <p>
-              Every bike on our floor is hand-selected, fully inspected, and backed by a team of factory-trained technicians who ride what they sell.
-            </p>
+            <p>Nairobi Powerbikes started in a small Industrial Area garage in 2017 with a single Ducati and a stubborn belief that Kenya deserved access to the world's finest motorcycles — without the import nightmare.</p>
+            <p>Today we operate Kenya's most trusted high-performance dealership, importing and servicing premium machines from Yamaha, Honda, Kawasaki, Ducati, BMW, KTM and more.</p>
+            <p>Every bike on our floor is hand-selected, fully inspected, and backed by a team of factory-trained technicians who ride what they sell.</p>
           </div>
         </div>
         <div className="grid sm:grid-cols-2 gap-px bg-border">
@@ -57,27 +57,27 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-surface border-y border-border py-20">
-        <div className="container-x">
-          <h2 className="font-display text-3xl md:text-4xl uppercase tracking-tight mb-12">The Team</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { name: "Kevin Mwangi", role: "Founder & Director" },
-              { name: "Sarah Otieno", role: "Head of Sales" },
-              { name: "Brian Kamau", role: "Master Technician" },
-              { name: "Faith Njeri", role: "Customer Success" },
-            ].map((m) => (
-              <div key={m.name} className="bg-background border border-border p-6">
-                <div className="aspect-square bg-surface-2 mb-4 grid place-items-center font-display text-5xl text-muted-foreground">
-                  {m.name.split(" ").map((n) => n[0]).join("")}
+      {team.length > 0 && (
+        <section className="bg-surface border-y border-border py-20">
+          <div className="container-x">
+            <h2 className="font-display text-3xl md:text-4xl uppercase tracking-tight mb-12">The Team</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {team.map((m) => (
+                <div key={m.id} className="bg-background border border-border p-6">
+                  {m.photo_url
+                    ? <img src={m.photo_url} alt={m.name} className="aspect-square w-full object-cover mb-4" />
+                    : <div className="aspect-square bg-surface-2 mb-4 grid place-items-center font-display text-5xl text-muted-foreground">
+                        {m.name.split(" ").map((n) => n[0]).join("")}
+                      </div>}
+                  <p className="font-display text-lg uppercase tracking-tight">{m.name}</p>
+                  <p className="font-mono text-[10px] uppercase text-muted-foreground tracking-widest mt-1">{m.role}</p>
+                  {m.bio && <p className="text-xs text-muted-foreground mt-3 leading-relaxed line-clamp-4">{m.bio}</p>}
                 </div>
-                <p className="font-display text-lg uppercase tracking-tight">{m.name}</p>
-                <p className="font-mono text-[10px] uppercase text-muted-foreground tracking-widest mt-1">{m.role}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </PageShell>
   );
 }

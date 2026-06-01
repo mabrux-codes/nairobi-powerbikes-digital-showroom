@@ -1,17 +1,17 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { Bike } from "@/lib/types";
+import type { Bike, Brand } from "@/lib/types";
 import { toast } from "sonner";
 import { ArrowLeft, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/admin/bikes/$id")({ component: BikeEditor });
 
 const empty: Partial<Bike> = {
-  slug: "", name: "", brand: "", type: "Sport", price: 0, engine: 0, power: "",
+  slug: "", name: "", brand: "", brand_id: null, type: "Sport", price: 0, engine: 0, power: "",
   year: new Date().getFullYear(), mileage: "0 km", condition: "Brand New",
   transmission: "", badge: null, image: "", images: [], description: "",
-  features: [], available: true, published: true,
+  features: [], available: true, published: true, stock_quantity: 1,
 };
 
 function BikeEditor() {
@@ -19,10 +19,12 @@ function BikeEditor() {
   const isNew = id === "new";
   const navigate = useNavigate();
   const [bike, setBike] = useState<Partial<Bike>>(empty);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    supabase.from("brands").select("*").order("name").then(({ data }) => setBrands((data ?? []) as Brand[]));
     if (isNew) return;
     supabase.from("bikes").select("*").eq("id", id).maybeSingle().then(({ data }) => {
       if (data) setBike(data as unknown as Bike);
@@ -43,9 +45,13 @@ function BikeEditor() {
 
   const save = async () => {
     setSaving(true);
+    const selectedBrand = brands.find((b) => b.id === bike.brand_id);
     const payload = {
       slug: bike.slug || (bike.name ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-      name: bike.name ?? "", brand: bike.brand ?? "", type: bike.type ?? "Sport",
+      name: bike.name ?? "",
+      brand: selectedBrand?.name ?? bike.brand ?? "",
+      brand_id: bike.brand_id || null,
+      type: bike.type ?? "Sport",
       price: Number(bike.price) || 0, engine: Number(bike.engine) || 0,
       power: bike.power ?? "", year: Number(bike.year) || new Date().getFullYear(),
       mileage: bike.mileage ?? "0 km", condition: bike.condition ?? "Brand New",
@@ -54,6 +60,7 @@ function BikeEditor() {
       description: bike.description ?? "",
       features: typeof bike.features === "string" ? (bike.features as string).split("\n").filter(Boolean) : (bike.features ?? []),
       available: bike.available ?? true, published: bike.published ?? true,
+      stock_quantity: Number(bike.stock_quantity ?? 1),
     };
     const res = isNew
       ? await supabase.from("bikes").insert(payload).select("id").maybeSingle()
@@ -87,16 +94,22 @@ function BikeEditor() {
           {F("Slug (URL)", <input className={inp} value={bike.slug ?? ""} onChange={(e) => set("slug", e.target.value)} placeholder="auto-generated if empty" />)}
         </div>
         <div className="grid sm:grid-cols-3 gap-5">
-          {F("Brand", <input className={inp} value={bike.brand ?? ""} onChange={(e) => set("brand", e.target.value)} />)}
+          {F("Brand", (
+            <select className={inp} value={bike.brand_id ?? ""} onChange={(e) => set("brand_id", e.target.value || null)}>
+              <option value="">— Select brand —</option>
+              {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
+          ))}
           {F("Type", <select className={inp} value={bike.type ?? "Sport"} onChange={(e) => set("type", e.target.value)}>
             {["Sport","Naked","Adventure","Touring","Cruiser"].map((t) => <option key={t}>{t}</option>)}
           </select>)}
           {F("Year", <input type="number" className={inp} value={bike.year ?? ""} onChange={(e) => set("year", Number(e.target.value))} />)}
         </div>
-        <div className="grid sm:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-4 gap-5">
           {F("Price (KES)", <input type="number" className={inp} value={bike.price ?? 0} onChange={(e) => set("price", Number(e.target.value))} />)}
           {F("Engine (cc)", <input type="number" className={inp} value={bike.engine ?? 0} onChange={(e) => set("engine", Number(e.target.value))} />)}
           {F("Power", <input className={inp} value={bike.power ?? ""} onChange={(e) => set("power", e.target.value)} />)}
+          {F("Stock qty", <input type="number" min={0} className={inp} value={bike.stock_quantity ?? 1} onChange={(e) => set("stock_quantity", Number(e.target.value))} />)}
         </div>
         <div className="grid sm:grid-cols-3 gap-5">
           {F("Mileage", <input className={inp} value={bike.mileage ?? ""} onChange={(e) => set("mileage", e.target.value)} />)}
